@@ -1,0 +1,18 @@
+[project]
+name = "lsgo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "gym>=0.26.2",
+    "matplotlib>=3.10.8",
+    "numpy>=2.2.6",
+    "pandas>=2.2.3",
+    "pypop7>=0.0.82",
+    "ray>=2.22.0",
+    "scikit-learn>=1.6.1",
+    "scipy>=1.15.3",
+    "torch>=2.11.0",
+    "tqdm>=4.67.3",
+]

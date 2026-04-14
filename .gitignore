@@ -1,0 +1,10 @@
+.tmp-*/
+__pycache__/
+*.pyc
+.venv
+
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
