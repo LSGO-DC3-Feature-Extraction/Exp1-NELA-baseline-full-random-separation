@@ -1,0 +1,29 @@
+{
+    "setting":{
+        "exp_id": 1,
+        "func_id": 1,
+        "slice_length": 20,
+        "agent": "LDE",
+        "use_fe": true
+    },
+    "test_problem_expected_y": 0.0,
+    "test_problem_optimized_y": 3.4,
+    "test_problem_slices":[
+        {
+            "slice_id": 1,
+            "slice_position": [17, 32, 73, 52, 54],
+            "position_expected": [3.2, 4.3, 4.6],
+            "position_get": [8.7, 3.5, 62.3],
+            "pred_y": 13.7,
+            "fill_value": 0
+        },
+        {
+            "slice_id": 2,
+            "slice_position": [17, 32, 73, 52, 54],
+            "position_expected": [3.2, 4.3, 4.6],
+            "position_get": [8.7, 3.5, 62.3],
+            "pred_y": 13.7,
+            "fill_value": 0
+        }
+    ]
+}

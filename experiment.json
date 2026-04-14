@@ -1,0 +1,74 @@
+[
+        {
+        "exp_id": 0,
+        "func_id": 1,
+        "slice_length": 100,
+        "agent": "LDE",
+        "use_fe": true,
+        "base_seed": 1
+    },
+    {
+        "exp_id": 1,
+        "func_id": 1,
+        "slice_length": 20,
+        "agent": "LDE",
+        "use_fe": true,
+        "base_seed": 1
+    },
+    {
+        "exp_id": 2,
+        "func_id": 1,
+        "slice_length": 20,
+        "agent": "LDE",
+        "use_fe": false,
+        "base_seed": 2
+    },
+    {
+        "exp_id": 3,
+        "func_id": 1,
+        "slice_length": 50,
+        "agent": "LDE",
+        "use_fe": true,
+        "base_seed": 3
+    },
+    {
+        "exp_id": 4,
+        "func_id": 1,
+        "slice_length": 50,
+        "agent": "LDE",
+        "use_fe": false,
+        "base_seed": 4
+    },
+    {
+        "exp_id": 5,
+        "func_id": 1,
+        "slice_length": 20,
+        "agent": "RLEPSO",
+        "use_fe": true,
+        "base_seed": 5
+    },
+    {
+        "exp_id": 6,
+        "func_id": 1,
+        "slice_length": 20,
+        "agent": "RLEPSO",
+        "use_fe": false,
+        "base_seed": 6
+    },
+    {
+        "exp_id": 7,
+        "func_id": 1,
+        "slice_length": 50,
+        "agent": "RLEPSO",
+        "use_fe": true,
+        "base_seed": 7
+    },
+    {
+        "exp_id": 8,
+        "func_id": 1,
+        "slice_length": 50,
+        "agent": "RLEPSO",
+        "use_fe": false,
+        "base_seed": 8
+    }
+]

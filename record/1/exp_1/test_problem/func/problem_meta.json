@@ -1,0 +1,11 @@
+{
+  "problem_id": 1,
+  "total_dim": 1000,
+  "seed": 2,
+  "name": "sphere",
+  "kernel_name": "sphere",
+  "lb": -5.0,
+  "ub": 5.0,
+  "optimum": 0.0,
+  "matrix_files": {}
+}

@@ -71,6 +71,12 @@ class RLEPSO_Optimizer(Learnable_Optimizer):
         reset_cost_history(self, self.__particles['gbest_val'])
         self.__per_no_improve -= self.__per_no_improve
         return self.__get_state(problem)
+
+    def get_best_value(self):
+        return float(self.__particles['gbest_val'])
+
+    def get_best_position(self):
+        return np.array(self.__particles['gbest_position'], copy=True)
     
     # calculate costs of solutions
     def __get_costs(self, problem, position):

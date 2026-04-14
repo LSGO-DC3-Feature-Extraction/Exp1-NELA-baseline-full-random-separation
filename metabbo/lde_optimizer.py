@@ -137,7 +137,9 @@ class LDE_Optimizer(Learnable_Optimizer):
     def init_population(self, problem):
         self.__pop = self.__mulgenerate_pop(self.__BATCH_SIZE, self.__config.NP, self.__config.dim, problem.lb, problem.ub, True)   # [bs, NP, dim]
         self.__fit = self.__get_cost([problem], self.__pop)
-        self.gbest_cost = np.min(self.__fit)
+        best_index = int(np.argmin(self.__fit))
+        self.gbest_cost = float(np.min(self.__fit))
+        self.gbest_position = self.__pop.reshape(-1, self.__config.dim)[best_index].copy()
         self.fes = self.__config.NP
         reset_cost_history(self, self.gbest_cost)
         self.__past_histo = (self.__config.NP/self.__config.BINS) * np.ones((self.__BATCH_SIZE, 1, self.__config.BINS))
@@ -145,6 +147,12 @@ class LDE_Optimizer(Learnable_Optimizer):
 
     def get_best(self):
         return self.gbest_cost
+
+    def get_best_value(self):
+        return float(self.gbest_cost)
+
+    def get_best_position(self):
+        return np.array(self.gbest_position, copy=True)
 
     def __get_feature(self, problem):
         if self.fe is not None:
@@ -198,7 +206,9 @@ class LDE_Optimizer(Learnable_Optimizer):
             hist_fit.append(np.histogram(fitness[b], self.__config.BINS)[0])
         hist_fit = np.vstack(hist_fit)  # [bs, BINS]
         self.__past_histo = np.concatenate((self.__past_histo, hist_fit[:, None, :]), axis=1)
-        self.gbest_cost = np.min(self.__fit)
+        best_index = int(np.argmin(self.__fit))
+        self.gbest_cost = float(np.min(self.__fit))
+        self.gbest_position = self.__pop.reshape(-1, self.__config.dim)[best_index].copy()
 
         feature = self.__get_feature(problem)
         maybe_record_cost(self, self.fes, self.gbest_cost)

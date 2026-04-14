@@ -302,5 +302,11 @@ class RLEPSO_Agent(Basic_Agent):
                 action = self.__actor(state)[0].cpu().numpy()
                 state, reward, is_done = env.step(action)
                 R += reward
-            return {'cost': env.optimizer.cost, 'fes': env.optimizer.fes, 'return': R}
+            return {
+                'cost': env.optimizer.cost,
+                'fes': env.optimizer.fes,
+                'return': R,
+                'best_position': env.optimizer.get_best_position(),
+                'best_value': env.optimizer.get_best_value(),
+            }
         

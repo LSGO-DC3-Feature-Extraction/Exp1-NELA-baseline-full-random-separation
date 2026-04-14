@@ -159,4 +159,10 @@ class LDE_Agent(Basic_Agent):
                 h0 = h_
                 c0 = c_
                 input_net = copy.deepcopy(next_input)
-            return {'cost': env.optimizer.cost, 'fes': env.optimizer.fes,'return':R}
+            return {
+                'cost': env.optimizer.cost,
+                'fes': env.optimizer.fes,
+                'return': R,
+                'best_position': env.optimizer.get_best_position(),
+                'best_value': env.optimizer.get_best_value(),
+            }

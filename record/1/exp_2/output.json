@@ -1,0 +1,14 @@
+{
+  "setting": {
+    "exp_id": 2,
+    "func_id": 1,
+    "slice_length": 20,
+    "agent": "LDE",
+    "use_fe": false,
+    "base_seed": 2
+  },
+  "test_problem_expected_y": null,
+  "test_problem_optimized_y": null,
+  "test_problem_slices": [],
+  "assembled_x": []
+}
