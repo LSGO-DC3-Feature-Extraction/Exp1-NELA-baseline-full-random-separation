@@ -1,0 +1,11 @@
+{
+  "problem_id": 5,
+  "total_dim": 1000,
+  "seed": 7,
+  "name": "schwefel12",
+  "kernel_name": "schwefel12",
+  "lb": -5.0,
+  "ub": 5.0,
+  "optimum": 0.0,
+  "matrix_files": {}
+}

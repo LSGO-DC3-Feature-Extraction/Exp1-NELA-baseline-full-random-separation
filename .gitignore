@@ -8,3 +8,8 @@ build/
 dist/
 wheels/
 *.egg-info
+
+*.pdf
+*.csv
+*.txt
+*.pkl

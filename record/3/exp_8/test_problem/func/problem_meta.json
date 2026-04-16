@@ -1,0 +1,11 @@
+{
+  "problem_id": 3,
+  "total_dim": 1000,
+  "seed": 9,
+  "name": "rastrigin",
+  "kernel_name": "rastrigin",
+  "lb": -5.0,
+  "ub": 5.0,
+  "optimum": 0.0,
+  "matrix_files": {}
+}

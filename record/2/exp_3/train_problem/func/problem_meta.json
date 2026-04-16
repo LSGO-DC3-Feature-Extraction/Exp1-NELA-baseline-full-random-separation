@@ -1,0 +1,11 @@
+{
+  "problem_id": 2,
+  "total_dim": 1000,
+  "seed": 3,
+  "name": "elliptic",
+  "kernel_name": "elliptic",
+  "lb": -5.0,
+  "ub": 5.0,
+  "optimum": 0.0,
+  "matrix_files": {}
+}

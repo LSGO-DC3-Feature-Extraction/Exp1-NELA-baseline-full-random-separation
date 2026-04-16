@@ -5,6 +5,7 @@ import csv
 import json
 import os
 import pickle
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -27,7 +28,7 @@ FEATURE_CHECKPOINT_PATH = ROOT / "feat_extractor" / "checkpoint.pkl"
 RECORD_ROOT = ROOT / "record"
 
 DEFAULT_TOTAL_DIM = 1000
-DEFAULT_TRAIN_EPOCH = 5
+DEFAULT_TRAIN_EPOCH = 10
 DEFAULT_MAX_FES = 2000
 DEFAULT_MAX_LEARNING_STEP = 10
 DEFAULT_DEVICE = "cpu"
@@ -35,7 +36,7 @@ DEFAULT_LOG_POINTS = 50
 DEFAULT_USE_MAX_FES_LIMIT = False
 DEFAULT_USE_MAX_LEARNING_STEP_LIMIT = False
 DISABLED_MAX_LEARNING_STEP = 10**12
-LOG_COLUMNS = ["phase", "epoch", "slice_id", "fes", "best_value", "learn_steps", "message"]
+LOG_COLUMNS = ["phase", "epoch", "slice_id", "fes", "best_value", "learn_steps", "elapsed_sec", "message"]
 
 
 class HistoryWriter:
@@ -86,7 +87,7 @@ def build_problem_dirs(exp_dir: Path):
 def clear_experiment_outputs(exp_dir: Path):
     for path in exp_dir.glob("history_slice_*.txt"):
         path.unlink()
-    for name in ("agent.pkl", "log.csv", "output.json", "log.txt"):
+    for name in ("agent.pkl", "log.csv", "output.json", "log.txt", "history_epoch.txt"):
         path = exp_dir / name
         if path.exists():
             path.unlink()
@@ -222,7 +223,18 @@ def format_display_float(value):
     return f"{float(value):.4f}"
 
 
-def append_log(log_rows, *, phase, epoch="", slice_id="", fes="", best_value="", learn_steps="", message=""):
+def append_log(
+    log_rows,
+    *,
+    phase,
+    epoch="",
+    slice_id="",
+    fes="",
+    best_value="",
+    learn_steps="",
+    elapsed_sec="",
+    message="",
+):
     log_rows.append(
         {
             "phase": phase,
@@ -231,6 +243,7 @@ def append_log(log_rows, *, phase, epoch="", slice_id="", fes="", best_value="",
             "fes": fes,
             "best_value": best_value,
             "learn_steps": learn_steps,
+            "elapsed_sec": elapsed_sec,
             "message": message,
         }
     )
@@ -243,16 +256,27 @@ def write_log_csv(exp_dir: Path, log_rows):
         writer.writerows(log_rows)
 
 
+def append_epoch_history(exp_dir: Path, *, epoch: int, elapsed_sec: float, slice_count: int):
+    line = f"epoch={epoch}\telapsed_sec={elapsed_sec:.4f}\tslice_count={slice_count}\n"
+    with (exp_dir / "history_epoch.txt").open("a", encoding="utf-8") as handle:
+        handle.write(line)
+        handle.flush()
+
+
 def train_agent(agent, feature_extractor, config, train_problems, exp_dir: Path, train_seed: int, log_rows):
     seed_all(train_seed)
     train_records = []
+    train_start = time.perf_counter()
     for epoch in range(config.train_epoch):
+        epoch_start = time.perf_counter()
+        epoch_slice_count = 0
         for slice_id, problem in train_problems:
             optimizer = create_optimizer(config.train_optimizer, config, feature_extractor)
             title = f"train epoch={epoch} slice={slice_id} indices={problem.indices.astype(int).tolist()}"
             optimizer.history_writer = HistoryWriter(exp_dir / f"history_slice_{slice_id}.txt", title)
             env = PBO_Env(problem, optimizer)
             stop, info = agent.train_episode(env)
+            epoch_slice_count += 1
             train_records.append(
                 {
                     "epoch": epoch,
@@ -270,6 +294,7 @@ def train_agent(agent, feature_extractor, config, train_problems, exp_dir: Path,
                 fes=int(optimizer.fes),
                 best_value=format_display_float(info["gbest"]),
                 learn_steps=int(info["learn_steps"]),
+                elapsed_sec="",
                 message=(
                     f"train_seed={train_seed};"
                     f"use_max_fes_limit={config.use_max_fes_limit};"
@@ -278,8 +303,24 @@ def train_agent(agent, feature_extractor, config, train_problems, exp_dir: Path,
             )
             if config.use_max_learning_step_limit and stop:
                 break
+        epoch_elapsed = time.perf_counter() - epoch_start
+        append_epoch_history(exp_dir, epoch=epoch, elapsed_sec=epoch_elapsed, slice_count=epoch_slice_count)
+        append_log(
+            log_rows,
+            phase="train_epoch_summary",
+            epoch=epoch,
+            elapsed_sec=format_display_float(epoch_elapsed),
+            message=f"slice_count={epoch_slice_count}",
+        )
         if config.use_max_learning_step_limit and stop:
             break
+    total_elapsed = time.perf_counter() - train_start
+    append_log(
+        log_rows,
+        phase="train_summary",
+        elapsed_sec=format_display_float(total_elapsed),
+        message=f"epoch_count={config.train_epoch}",
+    )
     return train_records
 
 
@@ -312,6 +353,7 @@ def test_agent(agent, feature_extractor, config, test_problems, exp_dir: Path, t
             fes=int(rollout["fes"]),
             best_value=format_display_float(best_value),
             learn_steps="",
+            elapsed_sec="",
             message=f"test_seed={test_seed}",
         )
         output["test_problem_slices"] = sorted(results, key=lambda item: int(item["slice_id"]))
@@ -354,6 +396,7 @@ def run_one_experiment(setting):
     append_log(
         log_rows,
         phase="summary",
+        elapsed_sec="",
         message=(
             f"exp_id={int(setting['exp_id'])};func_id={int(setting['func_id'])};"
             f"agent={setting['agent']};use_fe={bool(setting['use_fe'])};"
@@ -379,6 +422,7 @@ def run_one_experiment(setting):
     append_log(
         log_rows,
         phase="summary",
+        elapsed_sec="",
         message=(
             f"train_records={len(train_records)};test_records={len(test_results)};"
             f"expected_y={format_display_float(expected_value)};"

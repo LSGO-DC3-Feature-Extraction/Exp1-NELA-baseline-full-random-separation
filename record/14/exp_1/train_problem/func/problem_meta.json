@@ -1,0 +1,11 @@
+{
+  "problem_id": 14,
+  "total_dim": 1000,
+  "seed": 1,
+  "name": "different_powers",
+  "kernel_name": "different_powers",
+  "lb": -5.0,
+  "ub": 5.0,
+  "optimum": 0.0,
+  "matrix_files": {}
+}
